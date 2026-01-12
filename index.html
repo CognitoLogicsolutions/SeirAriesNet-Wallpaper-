@@ -1,28 +1,76 @@
- !DOCTYPE html>\
-<html lang="en">\
-<head>\
-    <meta charset="UTF-8">\
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
-    <title>PAUL M MARTINEZ - SeirAriesNet Grid</title>\
-    <link rel="stylesheet" href="styles.css">\
-</head>\
-<body>\
-    <div id="bg"></div>\
-    <div id="overlay">\
-        <div id="header">\
-            <h1>PAUL M. MARTINEZ</h1>\
-            <p>Architect | SeirAriesNet Training Grid</p>\
-            <div id="balance-display">$0</div>\
-        </div>\
-        <div id="controls">\
-            <button id="mine-asset-btn">Execute Mine</button>\
-            <button id="auto-btn">Auto-Pulse</button>\
-            <button id="reset-btn">Reset</button>\
-        </div>\
-        <div id="asset-container"></div>\
-    </div>\
-    <script src="script.js"></script>\
-</body>\
-</html>\
-\
-Html.1}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAUL M MARTINEZ - SeirAriesNet Grid</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Courier New', monospace; background: #000; }
+        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('asset/wallpaper.jpg'); background-size: cover; background-position: center; z-index: -1; filter: brightness(0.6); }
+        #overlay { color: white; background: rgba(0, 10, 20, 0.8); padding: 20px; max-width: 600px; margin: 5vh auto; border: 2px solid #00ff99; box-shadow: 0 0 20px #00ff99; text-align: center; }
+        #balance-display { font-size: 3rem; color: #00ff99; margin: 20px 0; }
+        #controls button { background: #000; color: #00ff99; border: 1px solid #00ff99; padding: 10px; cursor: pointer; margin: 5px; }
+        button:hover { background: #00ff99; color: #000; }
+        #asset-container { height: 30vh; overflow-y: auto; margin-top: 20px; border-top: 1px solid #333; text-align: left; padding: 10px; }
+        .asset-line { color: #00ffcc; font-size: 0.8rem; border-bottom: 1px solid #111; }
+    </style>
+</head>
+<body>
+    <div id="bg"></div>
+    <div id="overlay">
+        <div id="header">
+            <h1>PAUL M. MARTINEZ</h1>
+            <p>Architect | SeirAriesNet Training Grid</p>
+            <div id="balance-display">$0</div>
+        </div>
+        <div id="controls">
+            <button id="mine-asset-btn">Execute Mine</button>
+            <button id="auto-btn">Auto-Pulse</button>
+            <button id="reset-btn">Reset</button>
+        </div>
+        <div id="asset-container"></div>
+    </div>
+    <script>
+        let totalValue = Number(localStorage.getItem('paul_balance') || 0);
+        let autoInterval = null;
+        const display = document.getElementById('balance-display');
+        const container = document.getElementById('asset-container');
+        function updateUI() {
+            display.textContent = `$${totalValue.toLocaleString()}`;
+            localStorage.setItem('paul_balance', totalValue);
+        }
+        function log(msg) {
+            const line = document.createElement('div');
+            line.className = 'asset-line';
+            line.textContent = `> ${new Date().toLocaleTimeString()}: ${msg}`;
+            container.prepend(line);
+        }
+        document.getElementById('mine-asset-btn').onclick = () => {
+            totalValue += 100;
+            updateUI();
+            log("Asset Mined +$100");
+        };
+        document.getElementById('auto-btn').onclick = () => {
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+                log("Auto-Miner Offline");
+            } else {
+                autoInterval = setInterval(() => {
+                    totalValue += 10;
+                    updateUI();
+                }, 1000);
+                log("Auto-Miner Online");
+            }
+        };
+        document.getElementById('reset-btn').onclick = () => {
+            totalValue = 0;
+            updateUI();
+            container.innerHTML = '';
+            log("System Reset");
+        };
+        updateUI();
+        log("SeirAriesNet Grid Initialized.");
+    </script>
+</body>
+</html>
